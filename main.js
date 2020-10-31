@@ -1,5 +1,3 @@
-alert("This is an untrained neural network. To train it, draw a couple of smiley faces and press the :) button, then draw a couple of frowney faces and press the :( button. After you've done that, press the train button to train it. Once trained, you can have the neural network guess the output of your drawing by drawing either a smiley face or frowney face, then pressing guess!");
-
 class Neural_Network {
   constructor(structure=[]) {
     this.structure = structure;
@@ -379,6 +377,7 @@ function addsmile() {
   }
   train_x.push(x);
   train_y.push([1, 0]);
+  $("#count").text(train_y.length);
   reset();
 }
 
@@ -393,11 +392,12 @@ function addfrown() {
   }
   train_x.push(x);
   train_y.push([0, 1]);
+  $("#count").text(train_y.length);
   reset();
 }
 
 
-function reset(){
+function reset() {
   img = network.zeroM(300, 300);
   centered_img;
   pixelated_img = network.zeroM(8, 8);
@@ -406,30 +406,49 @@ function reset(){
   ctx.clearRect(0, 0, 300, 300);
 }
 
+let offset = $("#canvas").offset();
+
+
 $("#canvas").mousemove(function(e)  {
   if (draw) {
-    ctx.fillRect(e.clientX-10, e.clientY-10, 20, 20);
+    let y = e.clientY-10-offset.top;
+    let x = e.clientX-10-offset.left;
+    ctx.fillRect(x, y, 20, 20);
     for (var i = 0; i <= 20; i++) {
       for (var j = 0; j <= 20; j++) {
-        if (e.clientY-10+i >= 0 && e.clientY-10+i < 300 && e.clientX-10+j >= 0 && e.clientX-10+j < 300) {
-          img[e.clientY-10+i][e.clientX-10+j] = 1;
+        if (y+i >= 0 && y+i < 300 && x+j >= 0 && x+j < 300) {
+          img[y][x] = 1;
         }
       }
     }
   }
-})
-canvas.ontouchmove = function(e)  {
-  ctx.fillRect(e.touches[0].clientX-10, e.touches[0].clientY-10, 20, 20);
+});
+
+canvas.ontouchmove = canvas.ontouchstart = function(e) {
+  let y = parseInt(e.touches[0].clientY-10-offset.top);
+  let x = parseInt(e.touches[0].clientX-10-offset.left);
+  ctx.fillRect(x, y, 20, 20);
   for (var i = 0; i <= 20; i++) {
     for (var j = 0; j <= 20; j++) {
-      if (e.touches[0].clientY-10+i >= 0 && e.touches[0].clientY-10+i < 300 && e.touches[0].clientX-10+j >= 0 && e.touches[0].clientX-10+j < 300) {
-        img[parseInt(e.touches[0].clientY)-10+i][parseInt(e.touches[0].clientX)-10+j] = 1;
+      if (y+i >= 0 && y+i < 300 && x+j >= 0 && x+j < 300) {
+        img[y+i][x+j] = 1;
       }
     }
   }
 }
-$("#canvas").mousedown(function() {
+
+$("#canvas").mousedown(function(e) {
   draw = 1;
+  let y = e.clientY-10-offset.top;
+  let x = e.clientX-10-offset.left;
+  ctx.fillRect(x, y, 20, 20);
+  for (var i = 0; i <= 20; i++) {
+    for (var j = 0; j <= 20; j++) {
+      if (y+i >= 0 && y+i < 300 && x+j >= 0 && x+j < 300) {
+        img[y][x] = 1;
+      }
+    }
+  }
 })
 $("#canvas").mouseup(function() {
   draw = 0;

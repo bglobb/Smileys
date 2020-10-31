@@ -1,0 +1,17 @@
+body {
+  overflow: hidden;
+}
+
+canvas {
+  border: thick solid black;
+  margin-right: 10px;
+}
+
+#canvas-container {
+  float: left;
+}
+
+#instructions {
+  float: left;
+  width: min(600px, 100%);
+}
