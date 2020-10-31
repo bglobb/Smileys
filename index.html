@@ -7,19 +7,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <div id="canvas-container">
-      <canvas id="canvas" width="300" height="300"></canvas>
-      <h2 id="emotion"></h2>
-      <button onclick="guess()">Guess</button><button onclick="reset()">Reset</button><button onclick="train()">Train on <span id="count" style="color: red;">0</span> examples.</button><button onclick="addsmile()">:)</button><button onclick="addfrown()">:(</button>
+    <div style="overflow: auto; margin-bottom: 30px;">
+      <h1 style="text-align: center">Smiley Classifier</h1>
+      <div id="canvas-container">
+        <canvas id="canvas" width="300" height="300"></canvas>
+        <h2 id="emotion"></h2>
+        <button onclick="guess()">Guess</button><button onclick="reset()">Clear</button><button onclick="train()">Train on <span id="count" style="color: red;">0</span> examples.</button><button onclick="addsmile()">:)</button><button onclick="addfrown()">:(</button>
+      </div>
+      <div id="instructions">
+        This is an untrained neural network. You will need to build up a dataset (at least 1 smiley and 1 frowny) and click train before it can accurately guess whether you draw a smiley or a frowney.
+        <ol>
+          <li>Draw a smiley in the box then click <button disabled style="color: black;">:)</button>.</li>
+          <li>Draw a frowny in the box then click <button disabled style="color: black;">:(</button>. Go back to step 1 (optional).</li>
+          <li>Click <button disabled style="color: black;">Train ...</button> and wait until training finishes.</li>
+          <li>Draw a smiley or frowny, click <button disabled style="color: black;">Guess</button>, and see if the trained neural net guessed correctly!</li>
+        </ol>
+      </div>
     </div>
-    <div id="instructions">
-      This is an untrained neural network. You will need to build up a dataset (at least 1 smiley and 1 frowny) and click train before it can accurately guess whether you draw a smiley or a frowney.
-      <ol>
-        <li>Draw a smiley in the box then click :).</li>
-        <li>Draw a frowny in the box then click :(. Go back to step 1 (optional).</li>
-        <li>Click train and wait until training finishes.</li>
-        <li>Draw a smiley or frowny, click guess, and see if the trained neural net guessed correctly.</li>
-      </ol>
+    <h3 id="editor-title">Neural Network Editor</h3> (ignore if you don't know anything about JavaScript or Neural Nets)
+    <div id="editor-container">
+      <textarea name="name" rows="12" cols="60" spellcheck="false" id="editor">network = new Neural_Network(structure=[
+  {"nodes": 20, "input_size": 64, "activation": "relu"},  // 1st hidden layer has 20 nodes and takes input smiley as 64-dimensional vector
+  {"nodes": 10, "activation": "relu"},                    // 2nd hidden layer has 10 nodes
+  /* {"nodes": 10, "activation": "sigmoid"}, */           // Commented out
+  {"nodes": 2, "activation": "softmax"}
+]);                                                       // "activation" options are "relu", "sigmoid", and "softmax"
+
+network.setup(optimizer="rprop");                         //"optimizer" options are "rprop" and "none".</textarea>
+      <button type="button" name="button" onclick="eval($(this).prev().val());">Execute</button>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.js" charset="utf-8"></script>
     <script src="main.js" charset="utf-8"></script>

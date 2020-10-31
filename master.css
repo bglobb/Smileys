@@ -1,7 +1,3 @@
-body {
-  overflow: hidden;
-}
-
 canvas {
   border: thick solid black;
   margin-right: 10px;
@@ -9,9 +5,25 @@ canvas {
 
 #canvas-container {
   float: left;
+  margin-bottom: 10px;
 }
 
 #instructions {
   float: left;
-  width: min(600px, 100%);
+  width: calc(100% - 320px);
+  min-width: 500px;
+}
+
+#editor-title {
+  margin-bottom: 0;
+  display: inline-block;
+}
+
+#editor-container {
+  display: grid;
+  grid-template-columns: auto 70px;
+}
+
+#editor {
+  resize: none;
 }

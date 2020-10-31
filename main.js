@@ -48,7 +48,7 @@ class Neural_Network {
     this.learning_rate = learning_rate;
     this.decay_rate = decay_rate;
     let epoch = 0;
-    for (let epoch = 0; epoch < epochs; epoch++) {
+    for (epoch = 0; epoch < epochs; epoch++) {
       this.loss = 0;
       for (let i = 0; i < x.length; i++) {
         this.feedforward(x[i].concat([1]));
@@ -58,8 +58,8 @@ class Neural_Network {
       if (this.optimizer === "rprop") {
         this.rprop_update(epoch);
       }
-      console.log(this.loss);
     }
+    return [this.loss||0, epochs];
   }
 
   feedforward(x) {
@@ -251,20 +251,19 @@ class Neural_Network {
   }
 
   relu(x) {return Math.max(0, x)};
-  relu_derivative_relu_inverse(y) {return y !== 0};
+  relu_derivative_relu_inverse(y) {return y > 0};
   sigmoid(x) {return 1/(1+Math.exp(-x))};
   sigmoid_derivative_sigmoid_inverse(y) {return y*(1-y)};
 }
 var network = new Neural_Network(structure=[
-  {"nodes": 10, "input_size": 64, "activation": "relu"},
+  {"nodes": 20, "input_size": 64, "activation": "relu"},
+  {"nodes": 10, "activation": "relu"},
   {"nodes": 2, "activation": "softmax"}
 ]);
 network.setup(optimizer="rprop");
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var draw = 0;
-var mouse_x = 0;
-var mouse_y = 0;
 var train_x = [];
 var train_y = [];
 function zeroM(rows, columns) {
@@ -318,7 +317,12 @@ function center() {
       centered_img[i-extrema[2]][j-extrema[0]] = img[i][j];
     }
   }
-  var r = centered_img[0].length%8;
+  var r;
+  try {
+    r = centered_img[0].length%8;
+  } catch (e) {
+    alert("Not enough drawn!")
+  }
   for (var i = 0; i < 8-r; i++) {
     for (var j = 0; j < centered_img.length; j++) {
       if (i%2 === 0) {
@@ -363,7 +367,8 @@ function guess() {
 }
 
 function train() {
-  network.run(train_x, train_y, 10000, .01, 0);
+  let [loss, epochs] = network.run(train_x, train_y, 1000, .01, 0);
+  alert("Training complete!\nTraining iterations: "+epochs+"\nLoss: "+loss);
 }
 
 
@@ -411,13 +416,13 @@ let offset = $("#canvas").offset();
 
 $("#canvas").mousemove(function(e)  {
   if (draw) {
-    let y = e.clientY-10-offset.top;
-    let x = e.clientX-10-offset.left;
+    let y = parseInt(e.clientY-10-offset.top);
+    let x = parseInt(e.clientX-10-offset.left);
     ctx.fillRect(x, y, 20, 20);
     for (var i = 0; i <= 20; i++) {
       for (var j = 0; j <= 20; j++) {
         if (y+i >= 0 && y+i < 300 && x+j >= 0 && x+j < 300) {
-          img[y][x] = 1;
+          img[y+i][x+j] = 1;
         }
       }
     }
@@ -439,13 +444,13 @@ canvas.ontouchmove = canvas.ontouchstart = function(e) {
 
 $("#canvas").mousedown(function(e) {
   draw = 1;
-  let y = e.clientY-10-offset.top;
-  let x = e.clientX-10-offset.left;
+  let y = parseInt(e.clientY-10-offset.top);
+  let x = parseInt(e.clientX-10-offset.left);
   ctx.fillRect(x, y, 20, 20);
   for (var i = 0; i <= 20; i++) {
     for (var j = 0; j <= 20; j++) {
       if (y+i >= 0 && y+i < 300 && x+j >= 0 && x+j < 300) {
-        img[y][x] = 1;
+        img[y+i][x+j] = 1;
       }
     }
   }
